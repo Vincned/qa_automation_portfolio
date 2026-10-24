@@ -29,7 +29,7 @@ reusable components, test organization, and automated test reporting.
 
 ## Setup
 
-Use Python 3.12 to match the CI environment.
+Use Python 3.14.7 to match the CI environment.
 
 Create and activate a virtual environment:
 
