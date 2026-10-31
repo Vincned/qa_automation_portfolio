@@ -52,3 +52,19 @@ def pytest_runtest_makereport(item, call):
                 name="Screenshot on failure",
                 attachment_type=allure.attachment_type.PNG,
             )
+
+@pytest.fixture(scope="function")
+def authenticated_page(page):
+    api_request = page.context.request
+    response = api_request.post(
+        "https://the-internet.herokuapp.com/authenticate",
+        form={
+            "username": "tomsmith",
+            "password": "SuperSecretPassword!",
+        }
+    )
+    assert response.status == 200
+    assert response.url == "https://the-internet.herokuapp.com/secure"
+
+    page.goto("https://the-internet.herokuapp.com/secure")
+    return page

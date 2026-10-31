@@ -8,10 +8,38 @@ import allure
 @allure.description("Verify that a user can log in with valid credentials")
 def test_login(login_page):
     with allure.step("Enter credentials"):
-        login_page.login("tomsmith", "SuperSecretPassword!")
+        with login_page.page.expect_response(
+            lambda response: (
+                response.url.endswith("/authenticate") and
+                response.request.method == "POST"
+            )
+        ) as response_info:
+            login_page.login("tomsmith", "SuperSecretPassword!")
     #check the heading
     with allure.step("Verify successful login"):
         expect(login_page.secure_area_heading).to_be_visible()
+
+    response = response_info.value
+    assert response.headers.get("location") == "https://the-internet.herokuapp.com/secure"
+    assert response.status == 303
+
+def test_login_via_api(login_page):
+    api_request = login_page.page.context.request
+    response = api_request.post(
+        "https://the-internet.herokuapp.com/authenticate",
+        form={
+            "username": "tomsmith",
+            "password": "SuperSecretPassword!",
+        }
+    )
+    assert response.status == 200
+    assert response.url == "https://the-internet.herokuapp.com/secure"
+
+    login_page.page.goto("https://the-internet.herokuapp.com/secure")
+    expect(login_page.secure_area_heading).to_be_visible()
+
+def test_authenticated_page(authenticated_page):
+    expect(authenticated_page.get_by_role("heading", name="Secure Area", exact=True))
 
 
 @pytest.mark.parametrize(
