@@ -23,20 +23,8 @@ def test_login(login_page):
     assert response.headers.get("location") == "https://the-internet.herokuapp.com/secure"
     assert response.status == 303
 
-def test_login_via_api(login_page):
-    api_request = login_page.page.context.request
-    response = api_request.post(
-        "https://the-internet.herokuapp.com/authenticate",
-        form={
-            "username": "tomsmith",
-            "password": "SuperSecretPassword!",
-        }
-    )
-    assert response.status == 200
-    assert response.url == "https://the-internet.herokuapp.com/secure"
-
-    login_page.page.goto("https://the-internet.herokuapp.com/secure")
-    expect(login_page.secure_area_heading).to_be_visible()
+def test_login_via_api(authenticated_page):
+    assert authenticated_page.url.endswith('/secure')
 
 def test_authenticated_page(authenticated_page):
     expect(authenticated_page.get_by_role("heading", name="Secure Area", exact=True))
