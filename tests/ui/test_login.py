@@ -40,6 +40,8 @@ def test_login_error(login_page):
     login_page.page.route("**/authenticate", mock_server_error)
     login_page.login("tomsmith", "SuperSecretPassword!")
 
+    assert login_page.page.get_by_role("heading", name="Mock server error")
+
 
 @pytest.mark.parametrize(
     "username_value, password_value, error_value",
