@@ -67,4 +67,5 @@ def authenticated_page(page):
     assert response.url == "https://the-internet.herokuapp.com/secure"
 
     page.goto("https://the-internet.herokuapp.com/secure")
+
     return page

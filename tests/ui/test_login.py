@@ -29,6 +29,17 @@ def test_login_via_api(authenticated_page):
 def test_authenticated_page(authenticated_page):
     expect(authenticated_page.get_by_role("heading", name="Secure Area", exact=True))
 
+def mock_server_error(route):
+    route.fulfill(
+    status=500,
+    content_type="text/html",
+    body="<html><body><h1>Mock server error</h1></body></html>",
+    );
+
+def test_login_error(login_page):
+    login_page.page.route("**/authenticate", mock_server_error)
+    login_page.login("tomsmith", "SuperSecretPassword!")
+
 
 @pytest.mark.parametrize(
     "username_value, password_value, error_value",
