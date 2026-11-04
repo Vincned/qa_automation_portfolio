@@ -6,7 +6,7 @@ import allure
 
 @allure.title("Successful login")
 @allure.description("Verify that a user can log in with valid credentials")
-def test_login(login_page):
+def test_login(login_page, valid_credentials):
     with allure.step("Enter credentials"):
         with login_page.page.expect_response(
             lambda response: (
@@ -14,7 +14,7 @@ def test_login(login_page):
                 response.request.method == "POST"
             )
         ) as response_info:
-            login_page.login("tomsmith", "SuperSecretPassword!")
+            login_page.login(valid_credentials["username"], valid_credentials["password"])
     #check the heading
     with allure.step("Verify successful login"):
         expect(login_page.secure_area_heading).to_be_visible()
@@ -40,7 +40,7 @@ def test_login_error(login_page):
     login_page.page.route("**/authenticate", mock_server_error)
     login_page.login("tomsmith", "SuperSecretPassword!")
 
-    assert login_page.page.get_by_role("heading", name="Mock server error")
+    expect(login_page.page.get_by_role("heading", name="Mock server error")).to_be_visible()
 
 
 @pytest.mark.parametrize(

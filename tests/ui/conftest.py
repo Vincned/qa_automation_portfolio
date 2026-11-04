@@ -12,12 +12,14 @@ def browser():
         yield browser
         browser.close()
 
+
 @pytest.fixture(scope='function')
 def context(browser):
     #context creation
     context = browser.new_context()
     yield context
     context.close()
+
 
 @pytest.fixture(scope='function')
 def page(context):
@@ -32,6 +34,30 @@ def login_page(page):
     login_page = LoginPage(page)
     login_page.open()
     return login_page
+
+
+@pytest.fixture
+def two_contexts(browser):
+    context1 = browser.new_context()
+
+    try:
+        context2 = browser.new_context()
+
+        try:
+            yield context1, context2
+        finally:
+            context2.close()
+
+    finally:
+        context1.close()
+
+@pytest.fixture
+def valid_credentials(page):
+    valid_data = {"username": "tomsmith", "password": "SuperSecretPassword!"}
+
+    return valid_data
+
+
 
 @pytest.hookimpl(hookwrapper=True)
 def pytest_runtest_makereport(item, call):
@@ -52,6 +78,7 @@ def pytest_runtest_makereport(item, call):
                 name="Screenshot on failure",
                 attachment_type=allure.attachment_type.PNG,
             )
+
 
 @pytest.fixture(scope="function")
 def authenticated_page(page):

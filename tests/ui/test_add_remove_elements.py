@@ -15,3 +15,16 @@ def test_add_remove(page):
     delete_buttons.first.click()
     #check that only one button left
     expect(delete_buttons).to_have_count(1)
+
+
+def test_delete_element(page):
+    page.goto("https://the-internet.herokuapp.com/add_remove_elements/")
+
+    delete_button = page.get_by_role("button", name="Delete")
+    add_button = page.get_by_role("button", name="Add Element")
+
+    expect(delete_button).to_have_count(0)
+    add_button.click()
+    expect(delete_button).to_have_count(1)
+    delete_button.click()
+    expect(delete_button).to_have_count(0)
