@@ -52,7 +52,7 @@ def two_contexts(browser):
         context1.close()
 
 @pytest.fixture
-def valid_credentials(page):
+def valid_credentials():
     valid_data = {"username": "tomsmith", "password": "SuperSecretPassword!"}
 
     return valid_data
