@@ -13,5 +13,8 @@ __pycache__/
 allure-results/
 allure-report/
 
+#Trace Viewer # activation - playwright show-trace test-results/test_login.zip
+test-results/
+
 #macOS
 .DS_Store

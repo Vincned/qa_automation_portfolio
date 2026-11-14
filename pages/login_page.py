@@ -9,6 +9,7 @@ class LoginPage:
             "heading", name="Secure Area", exact=True
         )
         self.error_message = self.page.locator("#flash")
+        
 
     def open(self):
         self.page.goto(self.url)

@@ -1,6 +1,7 @@
 import pytest
 from playwright.sync_api import sync_playwright
 from pages.login_page import LoginPage
+from pathlib import Path
 import allure
 
 @pytest.fixture(scope='session')
@@ -14,11 +15,33 @@ def browser():
 
 
 @pytest.fixture(scope='function')
-def context(browser):
+def context(browser, request):
     #context creation
     context = browser.new_context()
-    yield context
-    context.close()
+
+    context.tracing.start(
+        screenshots=True,
+        snapshots=True,
+        sources=True
+    )
+
+    try:
+        yield context
+
+    finally:
+        try:
+            report = getattr(request.node, "rep_call", None)
+
+            if report and report.failed:
+                trace_dir = Path("test-results")
+                trace_dir.mkdir(parents=True, exist_ok=True)
+
+                trace_path = trace_dir / f"{request.node.name}.zip"
+                context.tracing.stop(path=str(trace_path))
+            else:
+                context.tracing.stop()
+        finally:
+            context.close()
 
 
 @pytest.fixture(scope='function')
@@ -57,13 +80,14 @@ def valid_credentials():
 
     return valid_data
 
-
-
 @pytest.hookimpl(hookwrapper=True)
-def pytest_runtest_makereport(item, call):
+def pytest_runtest_makereport(item):
     #create the test result before yield
     outcome = yield
     report = outcome.get_result()
+
+     # Save the report so fixtures can access the test result.
+    setattr(item, f"rep_{report.when}", report)
 
     #report.when == "call" - react on the error while test run and not error while configuring fixture or teardown
     #report.failed - check that the test fail
