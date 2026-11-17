@@ -3,9 +3,11 @@ from playwright.sync_api import sync_playwright
 from pages.login_page import LoginPage
 from pathlib import Path
 import allure
+from requests import request
+
 
 @pytest.fixture(scope='session')
-def browser():
+def browser(worker_id):
     #launch sync_playwright for browser control
     with sync_playwright() as p:
         #launch chrominium without displaying the browser window

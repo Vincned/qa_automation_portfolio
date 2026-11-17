@@ -16,3 +16,27 @@ def api_client():
         raise RuntimeError("API_BASE_URL is not configured")
 
     return APIClient(base_url=base_url)
+
+
+@pytest.fixture(scope="function")
+def created_user(api_client, request):
+    user_id = None
+    
+    def cleanup():
+        if user_id is not None:
+            api_client.delete(f"/users/{user_id}")
+        
+    request.addfinalizer(cleanup)
+    
+    payload = {
+    "name": "Test User",
+    "username": "test_user",
+    "email": "test@example.com"
+}
+    
+    response = api_client.post("/users", payload)
+    response.raise_for_status()
+    user_json = response.json()
+    user_id = user_json["id"]
+
+    yield user_id

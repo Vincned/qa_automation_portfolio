@@ -1,5 +1,6 @@
 from playwright.sync_api import expect
 from pages.login_page import LoginPage
+import pytest
 
 def test_contexts_are_isolated(two_contexts):
     context1, context2 = two_contexts
@@ -44,3 +45,20 @@ def test_authenticated_contexts_are_isolated(two_contexts, valid_credentials):
     expect(login_page2.username).to_be_visible()
     #the context1 is still auth
     expect(login_page1.secure_area_heading).to_be_visible()
+
+@pytest.mark.xdist_group("user_lifecycle")
+def test_create():
+    pass
+@pytest.mark.xdist_group("user_lifecycle")
+def test_update():
+    pass
+@pytest.mark.xdist_group("user_lifecycle")
+def test_delete():
+    pass
+
+@pytest.mark.xdist_group("authentication")
+def test_1():
+    pass
+@pytest.mark.xdist_group("authentication")
+def test_2():
+    pass

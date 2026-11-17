@@ -62,3 +62,4 @@ def test_api_connection_error(api_client):
     ):
         with pytest.raises(requests.exceptions.ConnectionError):
             api_client.get("/users/1")
+
