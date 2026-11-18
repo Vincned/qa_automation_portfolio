@@ -60,4 +60,7 @@ def created_post(api_client, request, created_user):
 
     response = api_client.post("/posts", payload)
     response.raise_for_status()
+    post_json = response.json()
+    id_of_the_post = post_json["id"]
 
+    yield id_of_the_post
