@@ -40,3 +40,24 @@ def created_user(api_client, request):
     user_id = user_json["id"]
 
     yield user_id
+
+
+@pytest.fixture
+def created_post(api_client, request, created_user):
+    post_id = None
+
+    def cleanup():
+        if post_id is not None:
+            api_client.delete(f"/posts/{post_id}")
+    
+    request.addfinalizer(cleanup)
+
+    payload = {
+        "userId": created_user,
+        "title": "Test Post",
+        "body": "Test post body",
+    }
+
+    response = api_client.post("/posts", payload)
+    response.raise_for_status()
+
