@@ -56,7 +56,7 @@ def test_login_via_api(authenticated_page):
 
 
 def test_authenticated_page(authenticated_page):
-    expect(authenticated_page.get_by_role("heading", name="Secure Area", exact=True))
+    expect(authenticated_page.get_by_role("heading", name="Secure Area", exact=True)).to_be_visible()
 
 
 def mock_server_error(route):

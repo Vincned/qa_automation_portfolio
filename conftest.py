@@ -32,7 +32,7 @@ def created_user(api_client, request):
     "name": "Test User",
     "username": "test_user",
     "email": "test@example.com"
-}
+    }
     
     response = api_client.post("/users", payload)
     response.raise_for_status()
@@ -61,6 +61,31 @@ def created_post(api_client, request, created_user):
     response = api_client.post("/posts", payload)
     response.raise_for_status()
     post_json = response.json()
-    id_of_the_post = post_json["id"]
+    post_id = post_json["id"]
 
-    yield id_of_the_post
+    yield post_id
+
+
+@pytest.fixture
+def created_comment(api_client, request, created_post):
+    comment_id = None
+
+    def cleanup():
+        if comment_id is not None:
+            api_client.delete(f"/comments/{comment_id}")
+
+    request.addfinalizer(cleanup)
+
+    payload = {
+    "postId": created_post,
+    "name": "Test Comment",
+    "email": "test@example.com",
+    "body": "Test comment body"
+    }
+
+    response = api_client.post("/comments", payload)
+    response.raise_for_status()
+    comment_json = response.json()
+    comment_id = comment_json["id"]
+
+    yield comment_id

@@ -18,3 +18,9 @@ def test_get_post(api_client):
     #title
     assert isinstance(post_json["title"], str)
     assert isinstance(post_json["body"], str)
+
+def test_created_comment(created_comment):
+    comment_id = created_comment
+
+    assert isinstance(comment_id, int)
+    assert comment_id > 0
