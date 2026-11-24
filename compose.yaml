@@ -1,0 +1,9 @@
+services:
+  tests:
+    build: .
+    env_file:
+      - .env
+    command: ["pytest", "-v", "--alluredir=allure-results"]
+    volumes:
+      - ./allure-results:/app/allure-results
+      
